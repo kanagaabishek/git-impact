@@ -1,14 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 
-	"impact/cmd"
-	"impact/diff"
-	"impact/git"
-	"impact/output"
-	"impact/rules"
+	"git-impact/cmd"
+	"git-impact/git"
+	"git-impact/output"
+	"git-impact/impact"
 )
 
 func main() {
@@ -42,19 +42,21 @@ func main() {
 	}
 	fmt.Println(diffText)
 
-	//get changed files from diffText
-	files := diff.ChangedFiles(diffText)
-	fmt.Println("Changed files:", files)
+	result := impact.Analyze(diffText)
 
-	//classify changed files
-	for _, file := range files {
-		labels := rules.Classify(file)
-		fmt.Println(file, "→", labels)
+	if opts.JSON {
+		b, err := json.MarshalIndent(result, "", "  ")
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "failed to marshal result:", err)
+			os.Exit(1)
+		}
+		fmt.Println(string(b))
+		return
 	}
 
-	//check for database schema changes
-	if diff.ContainsAlterTable(diffText) {
-	fmt.Println("⚠️ Database schema change detected")
+	fmt.Println("Overall Risk:", result.Risk)
+	for _, r := range result.Reasons {
+		fmt.Println("•", r)
 	}
 
 }

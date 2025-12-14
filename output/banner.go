@@ -13,6 +13,5 @@ func Banner() {
 
 Git Impact
 ──────────
-Change impact analyzer for Git repositories.
 `)
 }
