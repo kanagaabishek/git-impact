@@ -2,12 +2,23 @@ package main
 
 import (
 	"fmt"
-	"git-impact/git"
-	"git-impact/diff"
-	"git-impact/rules"
+	"os"
+
+	"impact/cmd"
+	"impact/diff"
+	"impact/git"
+	"impact/output"
+	"impact/rules"
 )
 
 func main() {
+
+	opts := cmd.ParseFlags()
+	
+	if opts.Help {
+		output.Help()
+		return
+	}
 
 	//check if git repo
 	root, err := git.RepoRoot()
@@ -17,11 +28,17 @@ func main() {
 	}
 	fmt.Println("Git repo detected at:", root)
 	
-	//get git diff
-	diffText, err := git.Diff()
+	// get git diff (or show a specific commit if requested)
+	var diffText string
+	if opts.Commit != "" {
+		diffText, err = git.ShowCommit(opts.Commit)
+	} else {
+		diffText, err = git.Diff()
+	}
+
 	if err != nil {
-		fmt.Println("Failed to get git diffText")
-		return
+		fmt.Println("Failed to read git diff:", err)
+		os.Exit(1)
 	}
 	fmt.Println(diffText)
 
@@ -38,6 +55,6 @@ func main() {
 	//check for database schema changes
 	if diff.ContainsAlterTable(diffText) {
 	fmt.Println("⚠️ Database schema change detected")
-}
+	}
 
 }

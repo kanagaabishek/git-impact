@@ -22,3 +22,12 @@ func Diff() (string, error) {
 	}
 	return string(out), nil
 }
+
+func ShowCommit(sha string) (string, error) {
+	cmd := exec.Command("git", "show", sha)
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return string(out), nil
+}
