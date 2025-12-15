@@ -1,6 +1,8 @@
 package impact
 
 import (
+	"strings"
+
 	"git-impact/diff"
 	"git-impact/rules"
 )
@@ -14,8 +16,17 @@ func Analyze(diffText string) Result {
 	reasons := []string{}
 	riskScore := 0
 
-	// 1. Changed files
+	// Changed files
 	files := diff.ChangedFiles(diffText)
+
+	// Check if migration files are present
+	hasMigration := false
+	for _, file := range files {
+		if strings.Contains(file, "/migration/") ||
+			strings.Contains(file, "/migrations/") {
+			hasMigration = true
+		}
+	}
 
 	for _, file := range files {
 		labels := rules.Classify(file)
@@ -35,13 +46,18 @@ func Analyze(diffText string) Result {
 		}
 	}
 
-	// 2. Schema-level detection
+	//Schema-level detection
 	if diff.ContainsAlterTable(diffText) {
-		riskScore += 40
-		reasons = append(reasons, "Database schema change detected (ALTER TABLE)")
+		if hasMigration {
+			riskScore += 20
+			reasons = append(reasons, "Database schema changed with migration")
+		} else {
+			riskScore += 40
+			reasons = append(reasons, "Database schema changed without migration")
+		}
 	}
 
-	// 3. Final risk classification
+	//Final risk calculation
 	risk := "LOW"
 	if riskScore >= 70 {
 		risk = "HIGH"
@@ -67,4 +83,3 @@ func unique(input []string) []string {
 	}
 	return result
 }
-

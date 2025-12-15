@@ -21,9 +21,16 @@ func ChangedFiles(diff string) []string {
 func ContainsAlterTable(diff string) bool {
 	lines := strings.Split(diff, "\n")
 	for _, line := range lines {
+		line = strings.TrimSpace(line)
+
+		// Only added SQL lines
 		if strings.HasPrefix(line, "+") &&
-			strings.Contains(strings.ToLower(line), "alter table") {
-			return true
+			!strings.HasPrefix(line, "+++") {
+
+			lower := strings.ToLower(line)
+			if strings.HasPrefix(lower, "+alter table") {
+				return true
+			}
 		}
 	}
 	return false

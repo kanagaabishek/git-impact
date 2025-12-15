@@ -2,20 +2,36 @@ package rules
 
 import "strings"
 
-
-//simple classification based on file path keywords
 func Classify(file string) []string {
 	labels := []string{}
+	f := strings.ToLower(file)
 
-	if strings.Contains(file, "auth") || strings.Contains(file, "security") {
+	if isAuthFile(f) {
 		labels = append(labels, "AUTH")
 	}
-	if strings.Contains(file, "db") || strings.Contains(file, "schema") {
+	if isDatabaseFile(f) {
 		labels = append(labels, "DATABASE")
 	}
-	if strings.Contains(file, "controller") || strings.Contains(file, "api") || strings.Contains(file, "routes") {
+	if isAPIFile(f) {
 		labels = append(labels, "API")
 	}
 	return labels
 }
 
+func isAuthFile(file string) bool {
+	return strings.Contains(file, "/auth/") ||
+		strings.Contains(file, "/security/") ||
+		strings.HasSuffix(file, "Config") ||
+		strings.HasSuffix(file, "Auth")
+}
+
+func isDatabaseFile(file string) bool {
+	return strings.Contains(file, "/db/") ||
+		strings.Contains(file, "/migration/") ||
+		strings.HasSuffix(file, ".sql")
+}
+
+func isAPIFile(file string) bool {
+	return strings.Contains(file, "/controller/") ||
+		strings.Contains(file, "/routes/")
+}
