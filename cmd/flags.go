@@ -6,6 +6,7 @@ type Options struct {
 	Help   bool
 	JSON   bool
 	Commit string
+	Ref    string // puthusu
 }
 
 func ParseFlags() Options {
@@ -16,5 +17,9 @@ func ParseFlags() Options {
 	flag.StringVar(&opts.Commit, "commit", "", "analyze specific commit")
 
 	flag.Parse()
+	args := flag.Args()
+	if len(args) > 0 {
+		opts.Ref = args[0]
+	}
 	return opts
 }
