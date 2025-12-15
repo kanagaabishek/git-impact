@@ -7,19 +7,20 @@ import (
 
 	"git-impact/cmd"
 	"git-impact/git"
-	"git-impact/output"
 	"git-impact/impact"
+	"git-impact/output"
 )
 
 func main() {
 
 	opts := cmd.ParseFlags()
-	
+
 	if opts.Help {
 		output.Help()
 		return
 	}
 
+	output.Banner()
 	//check if git repo
 	root, err := git.RepoRoot()
 	if err != nil {
@@ -27,7 +28,7 @@ func main() {
 		return
 	}
 	fmt.Println("Git repo detected at:", root)
-	
+
 	// get git diff (or show a specific commit if requested)
 	var diffText string
 	if opts.Commit != "" {
