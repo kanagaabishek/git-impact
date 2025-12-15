@@ -8,13 +8,14 @@ func Help() {
 	fmt.Println(`Usage:
   git impact [options] [<ref>]
 
+<ref> can be:
+  main..feature
+  v1.0..HEAD
+  abc123
+
 Options:
   --commit <sha>     analyze a specific commit
   --json             output machine-readable result
   --help             show this help
-
-Examples:
-  git impact
-  git impact main..feature/auth
 `)
 }
