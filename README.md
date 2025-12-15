@@ -1,5 +1,49 @@
 # git-impact
 
+## Demonstration
+**Git Impact** is a Git subcommand that analyzes code changes and tells you what those changes mean, not just what changed.
+
+## It helps answer questions like:
+
+Is this change risky?
+
+What parts of the system are affected?
+
+Should this be merged?
+ 
+<img width="1625" height="384" alt="image" src="https://github.com/user-attachments/assets/8f304a95-0978-4705-8e8f-45862ca7fcd0" />
+
+
+## Analyze a Specific Commit
+```bash
+git impact --commit a8f3d2
+```
+
+**What it does:**
+
+Runs impact analysis on a single commit
+
+Useful for reviewing historical changes
+
+<img width="1384" height="372" alt="image" src="https://github.com/user-attachments/assets/22dc9ee1-f843-4f5f-ab7b-80fb80752e9d" />
+
+## Branch / PR Analysis
+```bash
+git impact main..feature/auth
+```
+
+What it does:
+
+Analyzes what would change if feature/auth is merged into main
+
+Equivalent to a pull-request risk analysis
+
+Example:
+
+Overall Risk: 🔴 HIGH
+• Authentication-related code modified
+• Database schema changed without migration
+
 ## Installation
 
 ### Option 1: Download Binary (Recommended)
@@ -104,7 +148,3 @@ GOOS=darwin  GOARCH=amd64   go build -o releases/git-impact-darwin-amd64 .
 GOOS=darwin  GOARCH=arm64   go build -o releases/git-impact-darwin-arm64 .
 GOOS=windows GOARCH=amd64   go build -o releases/git-impact-windows-amd64.exe .
 ```
-
-## License
-
-MIT
